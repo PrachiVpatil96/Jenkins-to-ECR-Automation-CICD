@@ -1,14 +1,14 @@
-FROM maven:3.9-eclipse-temurin-17 AS build
-COPY . /spc
+FROM maven:3.9.7-eclipse-temurin-17 AS build
+RUN git clone https://github.com/dummyrepos/spring-petclinic-june24.git
+RUN cd spring-petclinic-june24 && mvn clean package
+
+FROM amazoncorretto:17-alpine-jdk
+RUN mkdir /spc && chown nobody /spc
+USER nobody
 WORKDIR /spc
-RUN mvn package
-
-
-FROM gcr.io/distroless/java17-debian12
-LABEL project="learning" 
-LABEL author="khaja"
-COPY --from=build  --chown=${USERNAME}:${USERNAME}  /spc/target/spring-petclinic-3.4.0-SNAPSHOT.jar /apps/spring-petclinic-3.4.0-SNAPSHOT.jar
-WORKDIR /apps
+COPY --from=build --chown=nobody /spring-petclinic-june24/target/spring-petclinic-3.3.0-SNAPSHOT.jar /spc/spring-petclinic.jar
 EXPOSE 8080
-# CMD Executes when the container is started
-CMD [ "java", "-jar", "spring-petclinic-3.4.0-SNAPSHOT.jar" ]
+CMD ["java", "-jar", "spring-petclinic.jar"]
+
+
+
