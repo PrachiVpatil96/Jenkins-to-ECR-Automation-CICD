@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools{
+        jdk 'jdk-17'
+        maven 'Maven'
+    }
     environment {
         AWS_REGION = 'ap-south-1'
         ECR_REPO = '430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic'
