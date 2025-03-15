@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools{
-        jdk 'jdk-17'
+        jdk 'Jdk-17'
         maven 'Maven'
     }
     environment {
@@ -21,8 +21,9 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
                     sh '''
-                        mvn clean verify sonar:sonar \
+                       sonar-scanner \
                         -Dsonar.projectKey=spc \
+                        -Dsonar.sources=. \
                         -Dsonar.host.url=http://3.109.133.29:9000 \
                         -Dsonar.login=$SONAR_TOKEN
                     '''
