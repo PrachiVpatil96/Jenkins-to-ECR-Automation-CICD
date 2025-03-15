@@ -13,5 +13,10 @@ pipeline {
 
              }
         }
-    }
+        stage('Build Image'){
+            steps{
+                sh "docker image build -t spc:1.0 ."
+            }
+        }
+    }   
 }
