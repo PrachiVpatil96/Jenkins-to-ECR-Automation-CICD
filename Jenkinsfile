@@ -4,6 +4,7 @@ pipeline {
         AWS_REGION = 'ap-south-1'
         ECR_REPO = '430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic'
         IMAGE_TAG = '1.0'
+
     }
 
     stages {
@@ -12,6 +13,18 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/PrachiVpatil96/Jenkins-to-ECR-Automation-CICD.git'
             }
         }
+        stage('Sonarqube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=spc \
+                        -Dsonar.host.url=http://3.109.133.29:9000 \
+                        -Dsonar.login=$SONAR_TOKEN
+                    '''
+        }
+    }
+}
         stage('Build Image') {
             steps {
                 sh "docker image build -t spc:$IMAGE_TAG ."

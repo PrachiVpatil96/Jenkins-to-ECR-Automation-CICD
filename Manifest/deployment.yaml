@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spc-deployment
+spec:
+  minReadySeconds: 3
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-pet-clinic
+    template:
+      metadata:
+        labels:
+          app: spring-pet-clinic
+      spec:
+        containers:
+          - image: 430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic:1.0
+            name: pet-clinic
+            ports:
+              - containerPort: 8080
+                hostPort: 8080
+                protocol: TCP
+            resources:
+              limits:
+                cpu: 500m
+                memory: 400Mi
+              requests:
+                cpu: 1000m
+                memory: 5000Mi

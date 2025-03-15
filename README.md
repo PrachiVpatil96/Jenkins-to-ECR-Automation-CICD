@@ -102,3 +102,113 @@ pipeline {
 ```
 
 ✅ Your Jenkins Pipeline is now ready to automate the build and deployment process! 🚀
+Youll see the pushed image in your AWS ECR repository as 
+![Preview](Images/4.png)
+
+![Preview](Images/5.png)
+
+## **Step 4: SonarQube Integration on Jenkins (Different Server)**
+
+This guide covers installing SonarQube using Docker on a separate server and configuring it in Jenkins via the user interface.
+
+---
+
+### **📌 1. Setup SonarQube on a Different Server using Docker**
+
+#### **1️⃣ Install Docker (if not installed)**
+1. Update the system:
+   ```bash
+   sudo apt update
+   ```
+2. Install Docker:
+   ```bash
+   sudo apt install -y docker.io
+   ```
+3. Start and enable Docker:
+   ```bash
+   sudo systemctl start docker
+   sudo systemctl enable docker
+   ```
+
+#### **2️⃣ Run SonarQube Container**
+1. Start a SonarQube container:
+   ```bash
+   docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+   ```
+2. Wait for SonarQube to initialize (this may take a few minutes).
+3. Access **SonarQube UI** at: `http://<SonarQube-Server-IP>:9000`
+4. Default login credentials:
+   - **Username**: `admin`
+   - **Password**: `admin`
+
+#### **3️⃣ Generate SonarQube Token**
+1. Log in to SonarQube.
+2. Go to **My Account > Security**.
+3. Click **Generate Token**, give it a name, and copy the generated token.
+
+---
+
+### **📌 2. Configure SonarQube in Jenkins UI**
+
+#### **1️⃣ Install SonarQube Scanner Plugin**
+1. Open **Jenkins Dashboard**.
+2. Navigate to **Manage Jenkins > Manage Plugins**.
+3. Search for **SonarQube Scanner** and install it.
+4. Restart Jenkins after installation.
+
+#### **2️⃣ Add SonarQube Server in Jenkins**
+1. Go to **Manage Jenkins > Configure System**.
+2. Find the **SonarQube Servers** section.
+3. Click **Add SonarQube** and enter:
+   - **Name**: `SonarQube`
+   - **Server URL**: `http://<SonarQube-Server-IP>:9000`
+   - **Authentication Token**: (paste the token you generated earlier)
+4. Click **Save**.
+
+#### **3️⃣ Install SonarQube Scanner**
+1. Navigate to **Manage Jenkins > Global Tool Configuration**.
+2. Scroll to **SonarQube Scanner**.
+3. Click **Add SonarQube Scanner** and enter:
+   - **Name**: `SonarScanner`
+   - **Install Automatically**: ✅ Checked
+4. Click **Save**.
+
+---
+
+### **📌 3. Update Jenkins Pipeline for SonarQube**
+Modify your Jenkins pipeline to include **SonarQube analysis**:
+
+```groovy
+pipeline {
+    agent any
+    environment {
+        AWS_REGION = 'ap-south-1'
+        ECR_REPO = '430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic'
+        IMAGE_TAG = '1.0'
+        SONAR_HOST_URL = 'http://<SonarQube-Server-IP>:9000'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/PrachiVpatil96/Jenkins-to-ECR-Automation-CICD.git'
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh "mvn clean verify sonar:sonar -Dsonar.projectKey=my-app -Dsonar.host.url=$SONAR_HOST_URL"
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+### **✅ SonarQube Integration Complete!**
+Now, Jenkins will analyze your code using SonarQube and display the results in the SonarQube UI.
+
+
