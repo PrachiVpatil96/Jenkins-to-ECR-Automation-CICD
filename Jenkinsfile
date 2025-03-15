@@ -22,6 +22,7 @@ pipeline {
         stage('TaG and Push to ECR'){
             steps{
                 sh "docker image tag spc:1.0 $AWS_REGION$ECR_REPO:$IMAGE_TAG"
+                sh "docker image push $AWS_REGION$ECR_REPO:$IMAGE_TAG"
             }
         }
        
