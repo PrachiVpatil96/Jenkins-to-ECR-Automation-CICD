@@ -3,6 +3,7 @@ pipeline {
     tools{
         jdk 'Jdk-17'
         maven 'Maven'
+        sonar '/opt/sonar-scanner/sonar-scanner-4.7.0.2747-linux/bin'
     }
     environment {
         AWS_REGION = 'ap-south-1'
@@ -21,7 +22,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
                     sh '''
-                       sonar-scanner \
+                       $sonar \
                         -Dsonar.projectKey=spc \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=http://3.109.133.29:9000 \
