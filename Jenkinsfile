@@ -18,5 +18,12 @@ pipeline {
                 sh "docker image build -t spc:1.0 ."
             }
         }
+
+        stage('TaG and Push to ECR'){
+            steps{
+                sh "docker image tag spc:1.0 $AWS_REGION$ECR_REPO:$IMAGE_TAG"
+            }
+        }
+       
     }   
 }
