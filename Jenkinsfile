@@ -18,11 +18,15 @@ pipeline {
                 sh "docker image build -t spc:1.0 ."
             }
         }
+        stage('Login into ECR'){
+            steps{
+                sh " sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO""
+            }
+        }
 
         stage('TaG and Push to ECR'){
             steps{
                 sh "docker image tag spc:1.0 $AWS_REGION$ECR_REPO:$IMAGE_TAG"
-                sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
                 sh "docker image push $AWS_REGION$ECR_REPO:$IMAGE_TAG"
             }
         }
