@@ -25,7 +25,7 @@ Ensure you have:
 
 | **Server Role**                | **Instance Type**  | **OS**          | **Installed Software**                            |
 |--------------------------------|------------------|----------------|-------------------------------------------------|
-| **Jenkins Server**             | t2.medium       | Ubuntu 22.04   | Jenkins, Docker, AWS CLI, Kubectl               |
+| **Jenkins Server**             | t2.medium       | Ubuntu 22.04   | Jenkins, Docker, AWS CLI, Kubectl ,Sonar-scanner              |
 | **Kubernetes Master (Kubeadm)** | t2.medium       | Ubuntu 22.04   | Kubeadm, Kubectl, Kubelet, Containerd           |
 | **Kubernetes Worker(s) (Kubeadm)** | t2.medium (x2)  | Ubuntu 22.04   | Kubeadm, Kubectl, Kubelet, Containerd           |
 | **ECR (AWS Service)**          | N/A             | AWS Managed    | Stores Docker Images                            |
@@ -210,5 +210,11 @@ pipeline {
 
 ### **✅ SonarQube Integration Complete!**
 Now, Jenkins will analyze your code using SonarQube and display the results in the SonarQube UI.
+![Preview](Images/6.png)
 
 
+
+
+## **Step 5: SelfHosted Agent (k8s Installation) 
+
+For detailed setup instructions, check out the [K8s-LibraryManagementSystem README](https://github.com/PrachiVpatil96/K8s-LibraryManagementSystem/blob/main/ReadMe.md).

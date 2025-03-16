@@ -9,10 +9,10 @@ spec:
   selector:
     matchLabels:
       app: spring-pet-clinic
-    template:
-      metadata:
-        labels:
-          app: spring-pet-clinic
+  template:
+    metadata:
+      labels:
+        app: spring-pet-clinic
       spec:
         containers:
           - image: 430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic:1.0
