@@ -17,27 +17,26 @@ pipeline {
             }
         }
 
-        stage('Sonarqube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
                     sh '''
-                        /opt/sonar-scanner/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
+                        mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=spc \
-                        -Dsonar.sources=. \
                         -Dsonar.host.url=http://13.233.168.85:9000 \
                         -Dsonar.login=$SONAR_TOKEN
                     '''
-                } // Closing bracket for withCredentials
-            } // Closing bracket for steps
-        } // Closing bracket for Sonarqube Analysis stage
+                }
+            }
+        }
 
-        stage('Build Image') {
+        stage('Build Docker Image') {
             steps {
                 sh "docker image build -t spc:$IMAGE_TAG ."
             }
         }
 
-        stage('Login into ECR') {
+        stage('Login to AWS ECR') {
             steps {
                 sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
             }
@@ -49,5 +48,5 @@ pipeline {
                 sh "docker image push $ECR_REPO:$IMAGE_TAG"
             }
         }
-    } // Closing bracket for stages
-} // Closing bracket for pipeline
+    }
+}
