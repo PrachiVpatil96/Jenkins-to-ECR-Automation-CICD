@@ -23,7 +23,7 @@ pipeline {
                     sh '''
                         mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=spc \
-                        -Dsonar.host.url=http://13.233.168.85:9000 \
+                        -Dsonar.host.url=https://13.233.168.85:9000 \
                         -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
