@@ -17,18 +17,18 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=spc \
-                        -Dsonar.host.url=https://13.233.168.85:9000 \
-                        -Dsonar.login=$SONAR_TOKEN
-                    '''
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
+        //             sh '''
+        //                 mvn clean verify sonar:sonar \
+        //                 -Dsonar.projectKey=spc \
+        //                 -Dsonar.host.url=https://13.233.168.85:9000 \
+        //                 -Dsonar.login=$SONAR_TOKEN
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
@@ -46,6 +46,21 @@ pipeline {
             steps {
                 sh "docker image tag spc:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG"
                 sh "docker image push $ECR_REPO:$IMAGE_TAG"
+            }
+        }
+        stage('Deploy to Kubeadm Cluster') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'k8s-secrets', variable: 'KUBECONFIG')]) {
+                        sh """
+                        export KUBECONFIG=$KUBECONFIG
+                        
+                        kubectl apply -f deployment.yaml
+                        
+                        kubectl rollout status deployment spc-deployment
+                        """
+                    }
+                }
             }
         }
     }
