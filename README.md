@@ -1,9 +1,9 @@
-# 🚀 CI/CD Pipeline: Push Docker Image to ECR & Deploy on Kubernetes via Kubeadm using Jenkins  
+#  CI/CD Pipeline: Push Docker Image to ECR & Deploy on Kubernetes via Kubeadm using Jenkins  
 
 This guide covers the full implementation, including server details, installations, and configurations.  
 
 
-## **📌 Overview**
+## ** Overview**
 This project automates:
 - **Building a Docker Image** in Jenkins
 - **Pushing the Image to AWS ECR**
@@ -11,7 +11,7 @@ This project automates:
 
 ---
 
-## **🔹 Prerequisites**
+## *Prerequisites*
 Ensure you have:
 - AWS Account with IAM permissions for **ECR & EC2**
 - A Jenkins Server with:
@@ -21,7 +21,7 @@ Ensure you have:
 - An EC2 instance configured as a **Kubernetes Master Node (Kubeadm)**
 - Worker Nodes joined to the Kubeadm cluster
 
-## 📌 1. Infrastructure Setup  
+##  1. Infrastructure Setup  
 
 | **Server Role**                | **Instance Type**  | **OS**          | **Installed Software**                            |
 |--------------------------------|------------------|----------------|-------------------------------------------------|
@@ -34,12 +34,12 @@ Ensure you have:
 
 ## **🔹 Step 1: Setup AWS ECR**  
 
-### 1️⃣ **Create an ECR repository**  
+### 1️ **Create an ECR repository**  
 ```bash
 aws ecr create-repository --repository-name my-app-repo
 ```
 
-### 2️⃣ **Authenticate Docker to AWS ECR**  
+###  2️ **Authenticate Docker to AWS ECR**  
 ```bash
 aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
 ```
@@ -47,7 +47,7 @@ Youll see the result as `Login Suceeeded!!`
 
 
 
-### **1️⃣ Create an IAM Role for EC2 with ECR Access**
+### ** 1️ Create an IAM Role for EC2 with ECR Access**
 
 1. Go to **AWS IAM Console** → **Roles** → **Create Role**
 2. Select **EC2** as the trusted entity
@@ -55,14 +55,14 @@ Youll see the result as `Login Suceeeded!!`
 4. Name the role (e.g., `EC2ECRAccessRole`)
 5. Click **Create Role**
 
-### **2️⃣ Attach the IAM Role to Your EC2 Instance**
+### ** 2️ Attach the IAM Role to Your EC2 Instance**
 
 1. Go to **EC2 Console** → **Instances**
 2. Select your EC2 instance
 3. Click **Actions** → **Security** → **Modify IAM Role**
 4. Attach the newly created IAM role (`EC2ECRAccessRole`)
 
-✅ Now, your EC2 instance can pull/push images to ECR without requiring `aws ecr get-login-password` manually! 🚀
+ Now, your EC2 instance can pull/push images to ECR without requiring `aws ecr get-login-password` manually! 
 
 
 
@@ -101,7 +101,7 @@ pipeline {
 }
 ```
 
-✅ Your Jenkins Pipeline is now ready to automate the build and deployment process! 🚀
+Your Jenkins Pipeline is now ready to automate the build and deployment process! 
 Youll see the pushed image in your AWS ECR repository as 
 ![Preview](Images/4.png)
 
@@ -113,9 +113,9 @@ This guide covers installing SonarQube using Docker on a separate server and con
 
 ---
 
-### **📌 1. Setup SonarQube on a Different Server using Docker**
+### ** 1. Setup SonarQube on a Different Server using Docker**
 
-#### **1️⃣ Install Docker (if not installed)**
+#### ** 1️ Install Docker (if not installed)**
 1. Update the system:
    ```bash
    sudo apt update
@@ -130,7 +130,7 @@ This guide covers installing SonarQube using Docker on a separate server and con
    sudo systemctl enable docker
    ```
 
-#### **2️⃣ Run SonarQube Container**
+#### ** 2️ Run SonarQube Container**
 1. Start a SonarQube container:
    ```bash
    docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
@@ -141,14 +141,14 @@ This guide covers installing SonarQube using Docker on a separate server and con
    - **Username**: `admin`
    - **Password**: `admin`
 
-#### **3️⃣ Generate SonarQube Token**
+#### ** 3️ Generate SonarQube Token**
 1. Log in to SonarQube.
 2. Go to **My Account > Security**.
 3. Click **Generate Token**, give it a name, and copy the generated token.
 
 ---
 
-### **📌 2. Configure SonarQube in Jenkins UI**
+### ** 2. Configure SonarQube in Jenkins UI**
 
 #### **1️⃣ Install SonarQube Scanner Plugin**
 1. Open **Jenkins Dashboard**.
@@ -156,7 +156,7 @@ This guide covers installing SonarQube using Docker on a separate server and con
 3. Search for **SonarQube Scanner** and install it.
 4. Restart Jenkins after installation.
 
-#### **2️⃣ Add SonarQube Server in Jenkins**
+#### ** 2️ Add SonarQube Server in Jenkins**
 1. Go to **Manage Jenkins > Configure System**.
 2. Find the **SonarQube Servers** section.
 3. Click **Add SonarQube** and enter:
@@ -165,7 +165,7 @@ This guide covers installing SonarQube using Docker on a separate server and con
    - **Authentication Token**: (paste the token you generated earlier)
 4. Click **Save**.
 
-#### **3️⃣ Install SonarQube Scanner**
+#### ** 3️ Install SonarQube Scanner**
 1. Navigate to **Manage Jenkins > Global Tool Configuration**.
 2. Scroll to **SonarQube Scanner**.
 3. Click **Add SonarQube Scanner** and enter:
@@ -208,7 +208,7 @@ pipeline {
 
 ---
 
-### **✅ SonarQube Integration Complete!**
+### ** SonarQube Integration Complete!**
 Now, Jenkins will analyze your code using SonarQube and display the results in the SonarQube UI.
 ![Preview](Images/6.png)
 
