@@ -53,6 +53,7 @@ pipeline {
             steps {
                 sh "kubectl apply -f manifest/deployment.yaml"
             }
+        }
 
         
     }
