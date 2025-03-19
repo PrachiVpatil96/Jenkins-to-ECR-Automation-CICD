@@ -44,7 +44,7 @@ pipeline {
                     """
                 }
             }
-        }
+        
 
         stage('Tag and Push to ECR') {
             steps {
