@@ -39,7 +39,7 @@ pipeline {
         stage('Login to AWS ECR') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'aws-credentilasD', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-credentilas', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'aws-credentilas', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sh """
