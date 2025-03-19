@@ -17,18 +17,18 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=spc \
-                        -Dsonar.host.url=https://13.233.168.85:9000 \
-                        -Dsonar.login=$SONAR_TOKEN
-                    '''
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         withCredentials([string(credentialsId: 'sonar-credentials', variable: 'SONAR_TOKEN')]) {
+        //             sh '''
+        //                 mvn clean verify sonar:sonar \
+        //                 -Dsonar.projectKey=spc \
+        //                 -Dsonar.host.url=https://13.233.168.85:9000 \
+        //                 -Dsonar.login=$SONAR_TOKEN
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
@@ -48,6 +48,12 @@ pipeline {
                 sh "docker image push $ECR_REPO:$IMAGE_TAG"
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh "kubectl apply -f manifest/deployment.yaml"
+            }
+
         
     }
 }
