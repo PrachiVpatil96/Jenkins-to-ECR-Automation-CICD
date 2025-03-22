@@ -38,7 +38,7 @@ pipeline {
 
         stage('Login to AWS ECR') {
             steps {
-                withAWS(credentials: 'aws-credentials', region: "$AWS_REGION") {
+                withCredentials(credentials: 'aws-credentials', region: "$AWS_REGION") {
                     sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
                 }
             }
@@ -52,11 +52,11 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh "kubectl apply -f manifest/."
-            }
-        }
+        // stage('Deploy to Kubernetes') {
+        //     steps {
+        //         sh "kubectl apply -f manifest/."
+        //     }
+        // }
 
         
     }
