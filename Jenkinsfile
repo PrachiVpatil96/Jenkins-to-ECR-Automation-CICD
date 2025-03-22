@@ -9,6 +9,7 @@ pipeline {
         ECR_REPO = '430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic'
         IMAGE_TAG = '1.0'
         KUBECONFIG = "$HOME/.kube/config"
+        KUBE_API_TOKEN = credentials('kube-token')
     }
 
     stages {
@@ -54,7 +55,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh "kubectl apply -f Manifest/."
+                sh "kubectl apply -f Manifest/. --token=$KUBE_API_TOKEN"
             }
         }
 
