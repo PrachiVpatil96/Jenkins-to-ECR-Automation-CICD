@@ -8,6 +8,7 @@ pipeline {
         AWS_REGION = 'ap-south-1'
         ECR_REPO = '430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic'
         IMAGE_TAG = '1.0'
+        KUBECONFIG = "$HOME/.kube/config"
     }
 
     stages {
@@ -39,7 +40,7 @@ pipeline {
         stage('Login to AWS ECR') {
             steps {
                 
-                    sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
+                   sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
                 }
             }
         
@@ -51,11 +52,11 @@ pipeline {
             }
         }
 
-        // stage('Deploy to Kubernetes') {
-        //     steps {
-        //         sh "kubectl apply -f manifest/."
-        //     }
-        // }
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh "kubectl apply -f manifest/."
+            }
+        }
 
         
     }
