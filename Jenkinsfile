@@ -55,7 +55,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh "kubectl apply -f Manifest/. --token=$KUBE_API_TOKEN"
+                sh "kubectl apply -f Manifest/."
             }
         }
 
