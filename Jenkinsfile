@@ -8,8 +8,6 @@ pipeline {
         AWS_REGION = 'ap-south-1'
         ECR_REPO = '430118814498.dkr.ecr.ap-south-1.amazonaws.com/spring-pet-clinic'
         IMAGE_TAG = '1.0'
-        KUBECONFIG = "$HOME/.kube/config"
-        KUBE_API_TOKEN = credentials('kube-token')
     }
 
     stages {
@@ -40,11 +38,9 @@ pipeline {
 
         stage('Login to AWS ECR') {
             steps {
-                
-                   sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
-                }
+                sh "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO"
             }
-        
+        }
 
         stage('Tag and Push to ECR') {
             steps {
@@ -55,11 +51,23 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh "kubectl apply -f Manifest/."
+                script {
+                    dir('Manifest') {  // Changed directory name to "Manifest"
+                        withKubeConfig(
+                            caCertificate: '', 
+                            clusterName: '', 
+                            contextName: '', 
+                            credentialsId: 'kube-credentials', // Changed credential ID
+                            namespace: '', 
+                            restrictKubeConfigAccess: false, 
+                            serverUrl: ''
+                        ) {
+                            sh 'kubectl apply -f deployment.yml'
+                            sh 'kubectl apply -f service.yml'
+                        }
+                    }
+                }
             }
         }
-
-        
-    }
-}
-
+    } 
+} 
