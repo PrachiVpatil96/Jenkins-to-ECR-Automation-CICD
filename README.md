@@ -218,5 +218,115 @@ Now, Jenkins will analyze your code using SonarQube and display the results in t
 ## **Step 5: SelfHosted Agent (k8s Installation) 
 
 For detailed setup instructions, check out the [K8s-LibraryManagementSystem README](https://github.com/PrachiVpatil96/K8s-LibraryManagementSystem/blob/main/ReadMe.md).
+# Kubernetes Cluster Setup with Jenkins Integration
+
+## Install Kubectl on Jenkins Machine
+
+```bash
+sudo apt update
+sudo apt install curl
+curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+kubectl version --client
+```
+
+---
+
+## Part 1: Set Hostnames
+
+### Master Node
+```bash
+sudo hostnamectl set-hostname K8s-Master
+```
+
+### Worker Node
+```bash
+sudo hostnamectl set-hostname K8s-Worker
+```
+
+---
+
+## Part 2: Install Docker on Both Master & Worker Nodes
+
+```bash
+sudo apt-get update
+sudo apt-get install -y docker.io
+sudo usermod -aG docker ubuntu
+newgrp docker
+sudo chmod 777 /var/run/docker.sock
+```
+
+---
+
+## Part 3: Install Kubernetes Components
+
+### Master Node
+```bash
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+
+### Worker Node
+```bash
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+```
+
+### Configure Kubernetes for Non-Root User
+```bash
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+### Apply Flannel Network Plugin
+```bash
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+
+---
+
+## Copy Kubernetes Config File
+
+1. Copy the Kubernetes configuration file from master node:
+   ```bash
+   scp ~/.kube/config <your_local_machine>:/path/to/store/secret-file.txt
+   ```
+2. Save it as **secret-file.txt** in your local machine.
+
+---
+
+## Jenkins Integration
+
+### Install Kubernetes Plugin in Jenkins
+
+1. Navigate to **Manage Jenkins** → **Manage Plugins**.
+2. Install the **Kubernetes Plugin**.
+3. Once installed, go to **Manage Jenkins** → **Manage Credentials**.
+4. Click on **Jenkins Global** → **Add Credentials**.
+5. Select **Kubernetes Configuration (Kubeconfig file content)**.
+6. Upload **secret-file.txt**.
+7. Save the configuration.
+
+Your Kubernetes cluster is now set up with Jenkins integration! 
+
+
+Now add the deployement stage nd apply the chnages and youll see pipeline is running!!!
+![Preview](Images/7.png)
+
+
+
+You can access your application as 
+`http://ip-addrees-of-master-node:port`
+
+
+
+
+
+
 
 
